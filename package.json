@@ -10,7 +10,8 @@
     "start": "node ./src/app.js",
     "dev": "nodemon ./src/app.js",
     "test": "jest --config=test/config.json",
-    "vercel-build": "echo 'Building for Vercel deployment'"
+    "vercel-build": "npm install && echo 'Building for Vercel deployment'",
+    "build": "echo 'No build step required'"
   },
   "dependencies": {
     "cluster": "^0.7.7",

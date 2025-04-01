@@ -6,6 +6,8 @@ const Game = require('./classes/game.js');
 
 const app = express();
 const server = http.createServer(app);
+
+// 更新Socket.io配置，修复Vercel部署问题
 const io = socketio(server, {
   cors: {
     origin: "*",
@@ -13,16 +15,24 @@ const io = socketio(server, {
     credentials: true
   },
   transports: ['websocket', 'polling'],
-  allowEIO3: true
+  allowEIO3: true,
+  pingTimeout: 60000, // 增加ping超时时间
+  path: '/socket.io/'
 });
 
 const PORT = process.env.PORT || 3000;
 
+// 增强CORS配置
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   next();
+});
+
+// 处理预检请求
+app.options('*', (req, res) => {
+  res.status(200).end();
 });
 
 app.use('/', express.static(__dirname + '/client'));
@@ -166,10 +176,14 @@ io.on('connection', (socket) => {
   });
 });
 
+// 为Vercel调整服务器监听
+// 在生产环境中，导出整个app和server
+// Vercel会在无服务器环境中执行这个函数
+module.exports = app;
+
+// 只在开发环境中监听端口
 if (process.env.NODE_ENV !== 'production') {
   server.listen(PORT, () => console.log(`hosting on port ${PORT}`));
 } else {
-  console.log('Running in production mode');
+  console.log('Running in production mode on Vercel');
 }
-
-module.exports = app;
