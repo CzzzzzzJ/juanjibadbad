@@ -11,7 +11,7 @@
 	<link rel="manifest" href="/site.webmanifest">
 	<meta name="msapplication-TileColor" content="#da532c">
 	<meta name="theme-color" content="#ffffff">
-	<title>Texas Hold 'Em - Distributed</title>
+	<title>卷积坏坏 - 超嗨德州扑克 🔥</title>
 </head>
 
 <body>
@@ -24,7 +24,7 @@
 		</div>
 	</header>
 	<div id="gameDiv">
-		<h4 class="white-text">Texas Hold 'Em Game</h4>
+		<h4 class="white-text">卷积坏坏 - 超嗨德州扑克 🔥</h4>
 		<div class="row">
 			<div class="col s12 m3">
 				<div id="playerInformationCard" class="card green darken-2">
@@ -42,17 +42,17 @@
 						<div id="status"></div>
 						<br />
 						<div id="playNext"></div>
-						<button onClick=fold() id="usernameFold" class="btn white black-text menuButtons">Fold</button>
+						<button onClick=fold() id="usernameFold" class="btn white black-text menuButtons">弃牌 😭</button>
 						<br />
-						<button onClick=check() id="usernameCheck" class="btn white black-text menuButtons">Check</button>
+						<button onClick=check() id="usernameCheck" class="btn white black-text menuButtons">让牌 👌</button>
 						<br />
 						<button href="#betModal" onClick=updateBetModal() id="usernameBet"
-							class="btn white black-text modal-trigger menuButtons">Bet</button>
+							class="btn white black-text modal-trigger menuButtons">下注 💰</button>
 						<br />
-						<button onClick=call() id="usernameCall" class="btn white black-text menuButtons">Call</button>
+						<button onClick=call() id="usernameCall" class="btn white black-text menuButtons">跟注 🧠</button>
 						<br />
 						<button href="#raiseModal" onClick=updateRaiseModal() id="usernameRaise"
-							class="btn white black-text modal-trigger menuButtons">Raise</button>
+							class="btn white black-text modal-trigger menuButtons">加注 🚀</button>
 					</div>
 				</div>
 			</div>
@@ -75,17 +75,15 @@
 			<div class="col card hoverable s12 m4">
 				<form>
 					<div class="card-content">
-						<span class="card-title black-text">Texas Hold &apos;Em Poker - Distributed</span>
-						<p>Welcome to Texas Hold &apos;Em Poker! Host a game and give the code to friends so they can join and play.
+						<span class="card-title black-text">卷积坏坏 - 超嗨德州扑克 🃏</span>
+						<p>想玩就来卷积坏坏！创建房间分享码，叫上朋友一起嗨！
 						</p>
 					</div>
 					<div class="card-action center-align">
 						<a id="hostButton" class="btn-large waves-effect waves-light indigo darken-3 white-text modal-trigger"
-							href="#hostModal">Host
-							Game</a>
+							href="#hostModal">开房间 🏠</a>
 						<a id="joinButton" class="btn-large waves-effect waves-light indigo darken-3 white-text modal-trigger"
-							href="#joinModal">Join
-							Game</a>
+							href="#joinModal">进房间 🚪</a>
 					</div>
 				</form>
 			</div>
@@ -93,57 +91,55 @@
 	</div>
 	<div id="hostModal" class="modal">
 		<div class="modal-content">
-			<h4>Host Game</h4>
+			<h4>开个房间 🏠</h4>
 			<div id="hostModalContent">
-				<p>Enter your name, and then we'll give you a code which you can give to your friends as the host.</p>
+				<p>输入你的昵称，拿到房间码后分享给朋友们吧！</p>
 				<div class="input-field col s12">
-					<label for="name">Name</label>
+					<label for="name">你的昵称</label>
 					<input type="text" name="name" id="hostName-field" required />
 				</div>
 				<button onclick=beginHost() type="submit"
-					class="waves-effect waves-light indigo darken-3 white-text btn-flat">Get
-					Code</button>
+					class="waves-effect waves-light indigo darken-3 white-text btn-flat">整个房间码 🔑</button>
 			</div>
 			<div id="playersNames"></div>
 			<div id="startGameArea"></div>
 		</div>
 		<div class="modal-footer">
-			<a class="modal-close waves-effect waves-light btn-flat">CLOSE</a>
+			<a class="modal-close waves-effect waves-light btn-flat">关闭</a>
 		</div>
 	</div>
 	</div>
 
 	<div id="joinModal" class="modal">
 		<div class="modal-content">
-			<h4>Join Game</h4>
+			<h4>加入游戏 🚪</h4>
 			<div id="joinModalContent">
-				<p>Enter the your name and the code provided by the host to join their room:</p>
+				<p>输入昵称和房间码，冲进去一起嗨！</p>
 				<div class="input-field col s12">
-					<label for="name">Name</label>
+					<label for="name">你的昵称</label>
 					<input type="text" name="name" id="joinName-field" required="required" />
 				</div>
 				<div class="input-field col s12">
-					<label for="code">Code</label>
+					<label for="code">房间码</label>
 					<input type="text" name="code" id="code-field" required="required" />
 				</div>
 				<button onclick=joinRoom() type="submit"
-					class="waves-effect waves-light indigo darken-3 white-text btn-flat">Join
-					Game</button>
+					class="waves-effect waves-light indigo darken-3 white-text btn-flat">冲！ 🚀</button>
 			</div>
 			<div id="playersNamesJoined"></div>
 			<div id="startGameAreaDisconnectSituation"></div>
 		</div>
 		<div class="modal-footer">
-			<a href="#!" class="modal-close waves-effect waves-light btn-flat">CLOSE</a>
+			<a href="#!" class="modal-close waves-effect waves-light btn-flat">关闭</a>
 		</div>
 	</div>
 
 	<div id="betModal" class="modal">
 		<div class="modal-content">
-			<h4>Bet</h4>
+			<h4>下注 💰</h4>
 			<form action="#">
 				<div id="betDisplay">
-					<h4>Drag the slider to place your bet!</h4>
+					<h4>划动滑块想下多少下多少～</h4>
 				</div>
 				<p class="range-field">
 					<input type="range" id="betRangeSlider" min="0" max="100" value="0" onchange="updateBetDisplay()"
@@ -152,20 +148,19 @@
 			</form>
 			<br />
 			<button onclick=bet() type="submit"
-				class="modal-close waves-effect waves-light indigo darken-3 white-text btn-flat">Confirm
-				Bet</button>
+				class="modal-close waves-effect waves-light indigo darken-3 white-text btn-flat">就这么干！ 💸</button>
 		</div>
 		<div class="modal-footer">
-			<a href="#!" class="modal-close waves-effect waves-light btn-flat">CLOSE</a>
+			<a href="#!" class="modal-close waves-effect waves-light btn-flat">取消</a>
 		</div>
 	</div>
 
 	<div id="raiseModal" class="modal">
 		<div class="modal-content">
-			<h4>Raise</h4>
+			<h4>加注 🚀</h4>
 			<form action="#">
 				<div id="raiseDisplay">
-					<h4>Drag the slider to raise the current top bet!</h4>
+					<h4>划动滑块加到爽！💸</h4>
 				</div>
 				<p class="range-field">
 					<input type="range" id="raiseRangeSlider" min="0" max="100" value="0" onchange=updateRaiseDisplay() />
@@ -173,16 +168,15 @@
 			</form>
 			<br />
 			<button onclick=raise() type="submit"
-				class="modal-close waves-effect waves-light indigo darken-3 white-text btn-flat">Confirm
-				Raise</button>
+				class="modal-close waves-effect waves-light indigo darken-3 white-text btn-flat">就这么干！ 💸</button>
 		</div>
 		<div class="modal-footer">
-			<a href="#!" class="modal-close waves-effect waves-light btn-flat">CLOSE</a>
+			<a href="#!" class="modal-close waves-effect waves-light btn-flat">取消</a>
 		</div>
 	</div>
 	<footer class="page-footer white">
 		<div class="container footer-c">
-			<b>© 2020 - Peter Wu. <a href="https://github.com/ptwu/distributed-texasholdem">GitHub Repository</a></b><br><br>
+			<b>© 2024 - 卷积坏坏超嗨德州扑克 <a href="https://github.com/CzzzzzzJ/juanjibadbad">GitHub 仓库 🚀</a></b><br><br>
 	</footer>
 
 	<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>

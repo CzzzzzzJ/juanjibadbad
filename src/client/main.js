@@ -14,16 +14,16 @@ var socket = io({
 var gameInfo = null;
 
 socket.on('playerDisconnected', function (data) {
-  Materialize.toast(data.player + ' disconnected.', 4000);
+  Materialize.toast(data.player + ' 润了润了~ 🏃‍♂️💨', 4000);
 });
 
 socket.on('hostRoom', function (data) {
   if (data != undefined) {
     if (data.players.length >= 11) {
       $('#hostModalContent').html(
-        '<h5>Code:</h5><code>' +
+        '<h5>房间码:</h5><code>' +
           data.code +
-          '</code><br /><h5>Warning: you have too many players in your room. Max is 11.</h5><h5>Players Currently in My Room</h5>'
+          '</code><br /><h5>警告: 人也太多了吧！最多11人哦~</h5><h5>已在房间的玩家</h5>'
       );
       $('#playersNames').html(
         data.players.map(function (p) {
@@ -32,9 +32,9 @@ socket.on('hostRoom', function (data) {
       );
     } else if (data.players.length > 1) {
       $('#hostModalContent').html(
-        '<h5>Code:</h5><code>' +
+        '<h5>房间码:</h5><code>' +
           data.code +
-          '</code><br /><h5>Players Currently in My Room</h5>'
+          '</code><br /><h5>已在房间的玩家</h5>'
       );
       $('#playersNames').html(
         data.players.map(function (p) {
@@ -44,13 +44,13 @@ socket.on('hostRoom', function (data) {
       $('#startGameArea').html(
         '<br /><button onclick=startGame(' +
           data.code +
-          ') type="submit" class= "waves-effect waves-light green darken-3 white-text btn-flat">Start Game</button >'
+          ') type="submit" class= "waves-effect waves-light green darken-3 white-text btn-flat">开整！冲冲冲 🚀</button >'
       );
     } else {
       $('#hostModalContent').html(
-        '<h5>Code:</h5><code>' +
+        '<h5>房间码:</h5><code>' +
           data.code +
-          '</code><br /><h5>Players Currently in My Room</h5>'
+          '</code><br /><h5>已在房间的玩家</h5>'
       );
       $('#playersNames').html(
         data.players.map(function (p) {
@@ -60,7 +60,7 @@ socket.on('hostRoom', function (data) {
     }
   } else {
     Materialize.toast(
-      'Enter a valid name! (max length of name is 12 characters)',
+      '昵称要填啊！（最多12个字符哦~）',
       4000
     );
     $('#joinButton').removeClass('disabled');
@@ -82,12 +82,12 @@ socket.on('joinRoomUpdate', function (data) {
   $('#startGameAreaDisconnectSituation').html(
     '<br /><button onclick=startGame(' +
       data.code +
-      ') type="submit" class= "waves-effect waves-light green darken-3 white-text btn-flat">Start Game</button >'
+      ') type="submit" class= "waves-effect waves-light green darken-3 white-text btn-flat">开整！冲冲冲 🚀</button >'
   );
   $('#joinModalContent').html(
     '<h5>' +
       data.host +
-      "'s room</h5><hr /><h5>Players Currently in Room</h5><p>You are now a host of this game.</p>"
+      "的房间</h5><hr /><h5>已在房间的玩家</h5><p>你现在是老大了，可以开始游戏啦！</p>"
   );
 
   $('#playersNamesJoined').html(
@@ -101,15 +101,16 @@ socket.on('joinRoom', function (data) {
   if (data == undefined) {
     $('#joinModal').closeModal();
     Materialize.toast(
-      "Enter a valid name/code! (max length of name is 12 characters & cannot be the same as someone else's)",
+      "昵称和房间码要对才行！（昵称最多12个字符，不能和别人撞名~）",
       4000
     );
     $('#hostButton').removeClass('disabled');
+    $('#hostButton').on('click');
   } else {
     $('#joinModalContent').html(
       '<h5>' +
         data.host +
-        "'s room</h5><hr /><h5>Players Currently in Room</h5><p>Please wait until your host starts the game. Leaving the page, refreshing, or going back will disconnect you from the game. </p>"
+        "的房间</h5><hr /><h5>已在房间的玩家</h5><p>等房主开始游戏哦~离开页面、刷新或返回会掉线的！</p>"
     );
     $('#playersNamesJoined').html(
       data.players.map(function (p) {
@@ -125,15 +126,15 @@ socket.on('dealt', function (data) {
       return renderCard(c);
     })
   );
-  $('#usernamesCards').text(data.username + ' - My Cards');
+  $('#usernamesCards').text(data.username + ' - 我的牌 🃏');
   $('#mainContent').remove();
 });
 
 socket.on('rerender', function (data) {
   if (data.myBet == 0) {
-    $('#usernamesCards').text(data.username + ' - My Cards');
+    $('#usernamesCards').text(data.username + ' - 我的牌 🃏');
   } else {
-    $('#usernamesCards').text(data.username + ' - My Bet: $' + data.myBet);
+    $('#usernamesCards').text(data.username + ' - 下注: ￥' + data.myBet + ' 💰');
   }
   if (data.community != undefined)
     $('#communityCards').html(
@@ -143,15 +144,23 @@ socket.on('rerender', function (data) {
     );
   else $('#communityCards').html('<p></p>');
   if (data.currBet == undefined) data.currBet = 0;
+  
+  // 翻译游戏阶段名称
+  let stageInChinese = data.stage;
+  if (data.stage === 'Pre-Flop') stageInChinese = '翻牌前 🎯';
+  else if (data.stage === 'Flop') stageInChinese = '翻牌 🎴';
+  else if (data.stage === 'Turn') stageInChinese = '转牌 🔄';
+  else if (data.stage === 'River') stageInChinese = '河牌 🌊';
+  
   $('#table-title').text(
-    'Game ' +
+    '第' +
       data.round +
-      '    |    ' +
-      data.stage +
-      '    |    Current Top Bet: $' +
+      '局 | ' +
+      stageInChinese +
+      ' | 最高注: ￥' +
       data.topBet +
-      '    |    Pot: $' +
-      data.pot
+      ' | 奖池: ￥' +
+      data.pot + ' 💸'
   );
   $('#opponentCards').html(
     data.players.map(function (p) {
@@ -186,7 +195,7 @@ socket.on('gameBegin', function (data) {
   $('#joinModal').closeModal();
   $('#hostModal').closeModal();
   if (data == undefined) {
-    alert('Error - invalid game.');
+    alert('啊哦，游戏出错了 😱');
   } else {
     $('#gameDiv').show();
   }
@@ -202,29 +211,53 @@ socket.on('reveal', function (data) {
   $('#usernameBet').hide();
   $('#usernameCall').hide();
   $('#usernameRaise').hide();
-
-  for (var i = 0; i < data.winners.length; i++) {
-    if (data.winners[i] == data.username) {
-      Materialize.toast('You won the hand!', 4000);
-      break;
-    }
-  }
-  $('#table-title').text('Hand Winner(s): ' + data.winners);
-  $('#playNext').html(
-    '<button onClick=playNext() id="playNextButton" class="btn white black-text menuButtons">Start Next Game</button>'
-  );
-  $('#blindStatus').text(data.hand);
-  $('#usernamesMoney').text('$' + data.money);
   $('#opponentCards').html(
-    data.cards.map(function (p) {
-      return renderOpponentCards(p.username, {
-        cards: p.cards,
-        folded: p.folded,
-        money: p.money,
-        endHand: p.hand,
-        buyIns: p.buyIns,
-      });
+    data.endInfo.map(function (p) {
+      if (p.win == true) {
+        Materialize.toast(p.player + ' 赢得了这一局！🎉', 4000);
+        return renderOpponentCards(p.player, {
+          folded: p.fold,
+          cards: p.cards,
+          money: p.money,
+          endHand: p.handText.replace('High Card', '高牌')
+                            .replace('One Pair', '一对')
+                            .replace('Two Pair', '两对')
+                            .replace('Three of a Kind', '三条')
+                            .replace('Straight', '顺子')
+                            .replace('Flush', '同花')
+                            .replace('Full House', '葫芦')
+                            .replace('Four of a Kind', '四条')
+                            .replace('Straight Flush', '同花顺')
+                            .replace('Royal Flush', '皇家同花顺'),
+          bets: data.bets,
+          buyIns: p.buyIns,
+        });
+      } else {
+        return renderOpponentCards(p.player, {
+          folded: p.fold,
+          cards: p.cards,
+          money: p.money,
+          endHand: p.handText.replace('High Card', '高牌')
+                            .replace('One Pair', '一对')
+                            .replace('Two Pair', '两对')
+                            .replace('Three of a Kind', '三条')
+                            .replace('Straight', '顺子')
+                            .replace('Flush', '同花')
+                            .replace('Full House', '葫芦')
+                            .replace('Four of a Kind', '四条')
+                            .replace('Straight Flush', '同花顺')
+                            .replace('Royal Flush', '皇家同花顺'),
+          bets: data.bets,
+          buyIns: p.buyIns,
+        });
+      }
     })
+  );
+  if (data.selfInfo.win) {
+    Materialize.toast('恭喜发财！这把是你的了！🎉', 4000);
+  }
+  $('#playNext').html(
+    '<br /><button onClick=playNext() id="playNextButton" class="btn white black-text">下一局 👉</button>'
   );
 });
 
@@ -268,7 +301,7 @@ var beginHost = function () {
     $('.toast').hide();
     $('#hostModal').closeModal();
     Materialize.toast(
-      'Enter a valid name! (max length of name is 12 characters)',
+      '请输入有效的昵称！(昵称最长12个字符)',
       4000
     );
     $('#joinButton').removeClass('disabled');
@@ -288,7 +321,7 @@ var joinRoom = function () {
   ) {
     $('.toast').hide();
     Materialize.toast(
-      'Enter a valid name/code! (max length of name is 12 characters.)',
+      '请输入有效的昵称和房间码！(昵称最长12个字符，且不能与其他玩家重复)',
       4000
     );
     $('#joinModal').closeModal();
@@ -314,9 +347,9 @@ var fold = function () {
 
 var bet = function () {
   if (parseInt($('#betRangeSlider').val()) == 0) {
-    Materialize.toast('You must bet more than $0! Try again.', 4000);
+    Materialize.toast('下0是不行的哦，多来点！💰', 4000);
   } else if (parseInt($('#betRangeSlider').val()) < 2) {
-    Materialize.toast('The minimum bet is $2.', 4000);
+    Materialize.toast('最少下￥2才行！别抠抠搜搜的～', 4000);
   } else {
     socket.emit('moveMade', {
       move: 'bet',
@@ -338,7 +371,7 @@ var raise = function () {
     parseInt($('#raiseRangeSlider').val()) == $('#raiseRangeSlider').prop('min')
   ) {
     Materialize.toast(
-      'You must raise higher than the current top bet! Try again.',
+      '加注必须高于当前最高注！别怂！💪',
       4000
     );
   } else {
@@ -390,18 +423,25 @@ function renderOpponent(name, data) {
       if (arr[pn].player == name) bet = arr[pn].bet;
     }
   }
+  
+  // 翻译盲注状态
+  let blindText = data.blind;
+  if (data.blind === 'Big Blind') blindText = '大盲注';
+  else if (data.blind === 'Small Blind') blindText = '小盲注';
+  else if (data.blind === 'Dealer') blindText = '庄家';
+  
   var buyInsText =
-    data.buyIns > 0 ? (data.buyIns > 1 ? 'buy-ins' : 'buy-in') : '';
+    data.buyIns > 0 ? (data.buyIns > 1 ? '次买入' : '次买入') : '';
   if (data.buyIns > 0) {
     if (data.text == 'Fold') {
       return (
         '<div class="col s12 m2 opponentCard"><div class="card grey"><div class="card-content white-text"><span class="card-title">' +
         name +
-        ' (Fold)</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-        data.blind +
+        ' (弃牌)</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
+        blindText +
         '<br />' +
-        data.text +
-        '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">$' +
+        (data.text == 'Fold' ? '弃牌' : data.text) +
+        '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">￥' +
         data.money +
         ' (' +
         data.buyIns +
@@ -416,11 +456,11 @@ function renderOpponent(name, data) {
           return (
             '<div class="col s12 m2 opponentCard"><div class="card yellow darken-3"><div class="card-content black-text"><span class="card-title">' +
             name +
-            '<br />Check</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-            data.blind +
+            '<br />让牌</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
+            blindText +
             '<br />' +
-            data.text +
-            '</p></div><div class="card-action yellow lighten-1 black-text center-align" style="font-size: 20px;">$' +
+            '轮到他了' +
+            '</p></div><div class="card-action yellow lighten-1 black-text center-align" style="font-size: 20px;">￥' +
             data.money +
             ' (' +
             data.buyIns +
@@ -434,10 +474,10 @@ function renderOpponent(name, data) {
             '<div class="col s12 m2 opponentCard"><div class="card yellow darken-3"><div class="card-content black-text"><span class="card-title">' +
             name +
             '</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-            data.blind +
+            blindText +
             '<br />' +
-            data.text +
-            '</p></div><div class="card-action yellow lighten-1 black-text center-align" style="font-size: 20px;">$' +
+            '轮到他了' +
+            '</p></div><div class="card-action yellow lighten-1 black-text center-align" style="font-size: 20px;">￥' +
             data.money +
             ' (' +
             data.buyIns +
@@ -450,13 +490,13 @@ function renderOpponent(name, data) {
           return (
             '<div class="col s12 m2 opponentCard"><div class="card yellow darken-3"><div class="card-content black-text"><span class="card-title">' +
             name +
-            '<br />Bet: $' +
+            '<br />下注: ￥' +
             bet +
             '</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-            data.blind +
+            blindText +
             '<br /><br />' +
-            data.text +
-            '</p></div><div class="card-action yellow lighten-1 black-text center-align" style="font-size: 20px;">$' +
+            '轮到他了' +
+            '</p></div><div class="card-action yellow lighten-1 black-text center-align" style="font-size: 20px;">￥' +
             data.money +
             ' (' +
             data.buyIns +
@@ -471,11 +511,11 @@ function renderOpponent(name, data) {
           return (
             '<div class="col s12 m2 opponentCard"><div class="card green darken-2" ><div class="card-content white-text"><span class="card-title">' +
             name +
-            '<br />Check</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-            data.blind +
+            '<br />让牌</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
+            blindText +
             '<br />' +
-            data.text +
-            '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">$' +
+            (data.text == 'Fold' ? '弃牌' : (data.text == 'Their Turn' ? '轮到他了' : '等待中')) +
+            '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">￥' +
             data.money +
             ' (' +
             data.buyIns +
@@ -489,10 +529,10 @@ function renderOpponent(name, data) {
             '<div class="col s12 m2 opponentCard"><div class="card green darken-2" ><div class="card-content white-text"><span class="card-title">' +
             name +
             '</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-            data.blind +
+            blindText +
             '<br />' +
-            data.text +
-            '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">$' +
+            '轮到他了' +
+            '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">￥' +
             data.money +
             ' (' +
             data.buyIns +
@@ -505,13 +545,13 @@ function renderOpponent(name, data) {
           return (
             '<div class="col s12 m2 opponentCard"><div class="card green darken-2" ><div class="card-content white-text"><span class="card-title">' +
             name +
-            '<br />Bet: $' +
+            '<br />下注: ￥' +
             bet +
             '</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-            data.blind +
+            blindText +
             '<br />' +
-            data.text +
-            '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">$' +
+            '轮到他了' +
+            '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">￥' +
             data.money +
             ' (' +
             data.buyIns +
@@ -530,11 +570,11 @@ function renderOpponent(name, data) {
       return (
         '<div class="col s12 m2 opponentCard"><div class="card grey"><div class="card-content white-text"><span class="card-title">' +
         name +
-        ' (Fold)</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-        data.blind +
+        ' (弃牌)</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
+        blindText +
         '<br />' +
         data.text +
-        '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">$' +
+        '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">￥' +
         data.money +
         '</div></div></div>'
       );
@@ -544,11 +584,11 @@ function renderOpponent(name, data) {
           return (
             '<div class="col s12 m2 opponentCard"><div class="card yellow darken-3"><div class="card-content black-text"><span class="card-title black-text">' +
             name +
-            '<br />Check</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-            data.blind +
+            '<br />让牌</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
+            blindText +
             '<br />' +
             data.text +
-            '</p></div><div class="card-action yellow lighten-1 black-text center-align" style="font-size: 20px;">$' +
+            '</p></div><div class="card-action yellow lighten-1 black-text center-align" style="font-size: 20px;">￥' +
             data.money +
             '</div></div></div>'
           );
@@ -557,10 +597,10 @@ function renderOpponent(name, data) {
             '<div class="col s12 m2 opponentCard"><div class="card yellow darken-3"><div class="card-content black-text"><span class="card-title black-text">' +
             name +
             '</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-            data.blind +
+            blindText +
             '<br />' +
             data.text +
-            '</p></div><div class="card-action yellow lighten-1 black-text center-align" style="font-size: 20px;">$' +
+            '</p></div><div class="card-action yellow lighten-1 black-text center-align" style="font-size: 20px;">￥' +
             data.money +
             '</div></div></div>'
           );
@@ -568,13 +608,13 @@ function renderOpponent(name, data) {
           return (
             '<div class="col s12 m2 opponentCard"><div class="card yellow darken-3"><div class="card-content black-text"><span class="card-title black-text">' +
             name +
-            '<br />Bet: $' +
+            '<br />下注: ￥' +
             bet +
             '</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-            data.blind +
+            blindText +
             '<br /><br />' +
             data.text +
-            '</p></div><div class="card-action yellow lighten-1 black-text center-align" style="font-size: 20px;">$' +
+            '</p></div><div class="card-action yellow lighten-1 black-text center-align" style="font-size: 20px;">￥' +
             data.money +
             '</div></div></div>'
           );
@@ -584,11 +624,11 @@ function renderOpponent(name, data) {
           return (
             '<div class="col s12 m2 opponentCard"><div class="card green darken-2" ><div class="card-content white-text"><span class="card-title">' +
             name +
-            '<br />Check</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-            data.blind +
+            '<br />让牌</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
+            blindText +
             '<br />' +
             data.text +
-            '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">$' +
+            '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">￥' +
             data.money +
             '</div></div></div>'
           );
@@ -597,10 +637,10 @@ function renderOpponent(name, data) {
             '<div class="col s12 m2 opponentCard"><div class="card green darken-2" ><div class="card-content white-text"><span class="card-title">' +
             name +
             '</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-            data.blind +
+            blindText +
             '<br />' +
             data.text +
-            '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">$' +
+            '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">￥' +
             data.money +
             '</div></div></div>'
           );
@@ -608,13 +648,13 @@ function renderOpponent(name, data) {
           return (
             '<div class="col s12 m2 opponentCard"><div class="card green darken-2" ><div class="card-content white-text"><span class="card-title">' +
             name +
-            '<br />Bet: $' +
+            '<br />下注: ￥' +
             bet +
             '</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br />' +
-            data.blind +
+            blindText +
             '<br />' +
             data.text +
-            '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">$' +
+            '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">￥' +
             data.money +
             '</div></div></div>'
           );
@@ -633,15 +673,15 @@ function renderOpponentCards(name, data) {
     }
   }
   var buyInsText2 =
-    data.buyIns > 0 ? (data.buyIns > 1 ? 'buy-ins' : 'buy-in') : '';
+    data.buyIns > 0 ? (data.buyIns > 1 ? '次买入' : '次买入') : '';
   if (data.buyIns > 0) {
     if (data.folded)
       return (
         '<div class="col s12 m2 opponentCard"><div class="card grey" ><div class="card-content white-text"><span class="card-title">' +
         name +
-        ' | Bet: $' +
+        ' | 下注: ￥' +
         bet +
-        '</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br /><br /></p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">$' +
+        '</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br /><br /></p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">￥' +
         data.money +
         ' (' +
         data.buyIns +
@@ -654,14 +694,14 @@ function renderOpponentCards(name, data) {
       return (
         '<div class="col s12 m2 opponentCard"><div class="card green darken-2" ><div class="card-content white-text"><span class="card-title">' +
         name +
-        ' | Bet: $' +
+        ' | 下注: ￥' +
         bet +
         '</span><p><div class="center-align"> ' +
         renderOpponentCard(data.cards[0]) +
         renderOpponentCard(data.cards[1]) +
         ' </div><br /><br /><br /><br /><br />' +
         data.endHand +
-        '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">$' +
+        '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">￥' +
         data.money +
         ' (' +
         data.buyIns +
@@ -675,9 +715,9 @@ function renderOpponentCards(name, data) {
       return (
         '<div class="col s12 m2 opponentCard"><div class="card grey" ><div class="card-content white-text"><span class="card-title">' +
         name +
-        ' | Bet: $' +
+        ' | 下注: ￥' +
         bet +
-        '</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br /><br /></p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">$' +
+        '</span><p><div class="center-align"><div class="blankCard" id="opponent-card" /><div class="blankCard" id="opponent-card" /></div><br /><br /><br /><br /><br /><br /></p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">￥' +
         data.money +
         '</div></div></div>'
       );
@@ -685,14 +725,14 @@ function renderOpponentCards(name, data) {
       return (
         '<div class="col s12 m2 opponentCard"><div class="card green darken-2" ><div class="card-content white-text"><span class="card-title">' +
         name +
-        ' | Bet: $' +
+        ' | 下注: ￥' +
         bet +
         '</span><p><div class="center-align"> ' +
         renderOpponentCard(data.cards[0]) +
         renderOpponentCard(data.cards[1]) +
         ' </div><br /><br /><br /><br /><br />' +
         data.endHand +
-        '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">$' +
+        '</p></div><div class="card-action green darken-3 white-text center-align" style="font-size: 20px;">￥' +
         data.money +
         '</div></div></div>'
       );
@@ -735,21 +775,21 @@ function renderOpponentCard(card) {
 function updateBetDisplay() {
   if ($('#betRangeSlider').val() == $('#usernamesMoney').text()) {
     $('#betDisplay').html(
-      '<h3 class="center-align">All-In $' +
+      '<h3 class="center-align">全下 ￥' +
         $('#betRangeSlider').val() +
         '</h36>'
     );
   } else {
     $('#betDisplay').html(
-      '<h3 class="center-align">$' + $('#betRangeSlider').val() + '</h36>'
+      '<h3 class="center-align">￥' + $('#betRangeSlider').val() + '</h36>'
     );
   }
 }
 
 function updateBetModal() {
-  $('#betDisplay').html('<h3 class="center-align">$0</h3>');
+  $('#betDisplay').html('<h3 class="center-align">￥0</h3>');
   document.getElementById('betRangeSlider').value = 0;
-  var usernamesMoneyStr = $('#usernamesMoney').text().replace('$', '');
+  var usernamesMoneyStr = $('#usernamesMoney').text().replace('￥', '');
   var usernamesMoneyNum = parseInt(usernamesMoneyStr);
   $('#betRangeSlider').attr({
     max: usernamesMoneyNum,
@@ -759,7 +799,7 @@ function updateBetModal() {
 
 function updateRaiseDisplay() {
   $('#raiseDisplay').html(
-    '<h3 class="center-align">Raise top bet to $' +
+    '<h3 class="center-align">加注至 ￥' +
       $('#raiseRangeSlider').val() +
       '</h3>'
   );
@@ -786,8 +826,8 @@ socket.on('displayPossibleMoves', function (data) {
   else $('#usernameBet').hide();
   if (data.call != 'no' || data.call == 'all-in') {
     $('#usernameCall').show();
-    if (data.call == 'all-in') $('#usernameCall').text('Call All-In');
-    else $('#usernameCall').text('Call $' + data.call);
+    if (data.call == 'all-in') $('#usernameCall').text('全下跟注');
+    else $('#usernameCall').text('跟注 ￥' + data.call);
   } else $('#usernameCall').hide();
   if (data.raise == 'yes') $('#usernameRaise').show();
   else $('#usernameRaise').hide();
@@ -795,7 +835,7 @@ socket.on('displayPossibleMoves', function (data) {
 
 function renderSelf(data) {
   $('#playNext').empty();
-  $('#usernamesMoney').text('$' + data.money);
+  $('#usernamesMoney').text('￥' + data.money);
   if (data.text == 'Their Turn') {
     $('#playerInformationCard').removeClass('grey');
     $('#playerInformationCard').removeClass('grey');
@@ -803,18 +843,18 @@ function renderSelf(data) {
     $('#playerInformationCard').addClass('darken-2');
     $('#usernamesCards').removeClass('white-text');
     $('#usernamesCards').addClass('black-text');
-    $('#status').text('My Turn');
-    Materialize.toast('My Turn', 4000);
+    $('#status').text('轮到我了');
+    Materialize.toast('轮到你了，快点行动！', 4000);
     socket.emit('evaluatePossibleMoves', {});
   } else if (data.text == 'Fold') {
-    $('#status').text('You Folded');
+    $('#status').text('你已弃牌');
     $('#playerInformationCard').removeClass('green');
     $('#playerInformationCard').removeClass('yellow');
     $('#playerInformationCard').removeClass('darken-2');
     $('#playerInformationCard').addClass('grey');
     $('#usernamesCards').removeClass('black-text');
     $('#usernamesCards').addClass('white-text');
-    Materialize.toast('You folded', 3000);
+    Materialize.toast('你选择了弃牌，下一局再战！', 3000);
     $('#usernameFold').hide();
     $('#usernameCheck').hide();
     $('#usernameBet').hide();
@@ -835,5 +875,12 @@ function renderSelf(data) {
     $('#usernameCall').hide();
     $('#usernameRaise').hide();
   }
-  $('#blindStatus').text(data.blind);
+  
+  // 翻译盲注状态
+  let blindText = data.blind;
+  if (data.blind === 'Big Blind') blindText = '大盲注';
+  else if (data.blind === 'Small Blind') blindText = '小盲注';
+  else if (data.blind === 'Dealer') blindText = '庄家';
+  
+  $('#blindStatus').text(blindText);
 }

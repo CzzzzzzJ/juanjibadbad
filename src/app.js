@@ -1,4 +1,4 @@
-// server-side socket.io backend event handling
+// server-side socket.io backend event handling - 卷积坏坏超嗨版🔥
 const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
@@ -44,7 +44,7 @@ app.get('/api/health', (req, res) => {
 let rooms = [];
 
 io.on('connection', (socket) => {
-  console.log('new connection ', socket.id);
+  console.log('有新玩家来玩啦~ 🎮 ', socket.id);
   socket.on('host', (data) => {
     if (data.username == '' || data.username.length > 12) {
       socket.emit('hostRoom', undefined);
@@ -183,7 +183,7 @@ module.exports = app;
 
 // 只在开发环境中监听端口
 if (process.env.NODE_ENV !== 'production') {
-  server.listen(PORT, () => console.log(`hosting on port ${PORT}`));
+  server.listen(PORT, () => console.log(`卷积坏坏已在${PORT}端口启动，冲冲冲！🚀`));
 } else {
-  console.log('Running in production mode on Vercel');
+  console.log('卷积坏坏已在Vercel上线，开整！🔥');
 }
