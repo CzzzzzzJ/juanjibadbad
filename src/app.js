@@ -6,11 +6,30 @@ const Game = require('./classes/game.js');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server);
+const io = socketio(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  transports: ['websocket', 'polling'],
+  allowEIO3: true
+});
 
 const PORT = process.env.PORT || 3000;
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
 app.use('/', express.static(__dirname + '/client'));
+
+app.get('/api/health', (req, res) => {
+  res.status(200).send('OK');
+});
 
 let rooms = [];
 
@@ -147,4 +166,10 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(PORT, () => console.log(`hosting on port ${PORT}`));
+if (process.env.NODE_ENV !== 'production') {
+  server.listen(PORT, () => console.log(`hosting on port ${PORT}`));
+} else {
+  console.log('Running in production mode');
+}
+
+module.exports = app;

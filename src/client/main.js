@@ -4,7 +4,13 @@ $(document).ready(function () {
   $('.tooltipped').tooltip({ delay: 50 });
 });
 
-var socket = io();
+var socket = io({
+  transports: ['websocket', 'polling'],
+  forceNew: true,
+  timeout: 10000,
+  reconnection: true,
+  reconnectionAttempts: 10
+});
 var gameInfo = null;
 
 socket.on('playerDisconnected', function (data) {
